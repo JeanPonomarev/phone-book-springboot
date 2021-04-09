@@ -1,5 +1,7 @@
 package ru.jeanponomarev.phonebookspringboot.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +14,19 @@ import ru.jeanponomarev.phonebookspringboot.entity.Contact;
 import ru.jeanponomarev.phonebookspringboot.service.ContactService;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static ru.jeanponomarev.phonebookspringboot.logger.LoggerUtils.logBasicUriInfo;
 
 @Controller
 @RequestMapping("/api")
 public class ContactsController {
+    private static final Logger logger = LoggerFactory.getLogger(ContactsController.class);
 
-    private ContactService contactService;
-    private ContactDtoToContactEntityConverter contactDtoToContactEntityConverter;
-    private ContactEntityToContactDtoConverter contactEntityToContactDtoConverter;
+    private final ContactService contactService;
+    private final ContactDtoToContactEntityConverter contactDtoToContactEntityConverter;
+    private final ContactEntityToContactDtoConverter contactEntityToContactDtoConverter;
 
     @Autowired
     public ContactsController(ContactService contactService,
@@ -33,19 +39,27 @@ public class ContactsController {
 
     @GetMapping("/getAllContacts")
     @ResponseBody
-    public List<ContactDto> getAllContacts() {
+    public List<ContactDto> getAllContacts(HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
+
         return contactEntityToContactDtoConverter.convert(contactService.getAll());
     }
 
     @GetMapping("/getContact")
     @ResponseBody
-    public List<ContactDto> getContactByProperty(@RequestParam String property) {
-        return contactEntityToContactDtoConverter.convert(contactService.getByProperty(property));
+    public List<ContactDto> getContactByProperty(@RequestParam String property, HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
+
+        List<Contact> targetContacts = contactService.getByProperty(property);
+
+        return contactEntityToContactDtoConverter.convert(targetContacts);
     }
 
     @PostMapping("/createContact")
     @ResponseBody
-    public ResponseEntity<ContactValidationResult> createContact(@RequestBody ContactDto contactDto) {
+    public ResponseEntity<ContactValidationResult> createContact(@RequestBody ContactDto contactDto, HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
+
         Contact contactEntity = contactDtoToContactEntityConverter.convert(contactDto);
         
         contactEntity.setId(null);
@@ -61,7 +75,8 @@ public class ContactsController {
 
     @PutMapping("/updateContact")
     @ResponseBody
-    public ResponseEntity<ContactValidationResult> updateContact(@RequestBody ContactDto contactDto) {
+    public ResponseEntity<ContactValidationResult> updateContact(@RequestBody ContactDto contactDto, HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
 
         Contact contactEntity = contactDtoToContactEntityConverter.convert(contactDto);
 
@@ -76,7 +91,8 @@ public class ContactsController {
 
     @DeleteMapping("/deleteContact")
     @ResponseBody
-    public ResponseEntity<ContactValidationResult> deleteContact(@RequestParam Long id) {
+    public ResponseEntity<ContactValidationResult> deleteContact(@RequestParam Long id, HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
 
         Contact removedContact = contactService.deleteById(id);
 

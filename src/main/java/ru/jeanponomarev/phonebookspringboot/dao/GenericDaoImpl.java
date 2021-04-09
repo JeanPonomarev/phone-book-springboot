@@ -65,7 +65,10 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
     @Override
     public T deleteById(PK id) {
         T targetEntity = getById(id);
-        delete(targetEntity);
+
+        if (targetEntity != null) {
+            delete(targetEntity);
+        }
 
         return targetEntity;
     }

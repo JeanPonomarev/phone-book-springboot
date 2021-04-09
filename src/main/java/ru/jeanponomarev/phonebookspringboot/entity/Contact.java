@@ -80,7 +80,7 @@ public class Contact {
 
     @Override
     public String toString() {
-        return "Contact{" +
+        return "{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +

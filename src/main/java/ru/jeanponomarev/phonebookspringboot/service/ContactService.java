@@ -1,7 +1,10 @@
 package ru.jeanponomarev.phonebookspringboot.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.jeanponomarev.phonebookspringboot.controller.ContactsController;
 import ru.jeanponomarev.phonebookspringboot.dao.ContactDao;
 import ru.jeanponomarev.phonebookspringboot.entity.Contact;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
@@ -9,11 +12,14 @@ import ru.jeanponomarev.phonebookspringboot.validator.ContactValidator;
 
 import java.util.List;
 
+import static ru.jeanponomarev.phonebookspringboot.logger.LoggerUtils.*;
+
 @Service
 public class ContactService {
+    private static final Logger logger = LoggerFactory.getLogger(ContactsController.class);
 
-    private ContactDao contactDao;
-    private ContactValidator contactValidator;
+    private final ContactDao contactDao;
+    private final ContactValidator contactValidator;
 
     @Autowired
     public ContactService(ContactDao contactDao, ContactValidator contactValidator) {
@@ -22,11 +28,19 @@ public class ContactService {
     }
 
     public List<Contact> getAll() {
-        return contactDao.getAllContacts();
+        List<Contact> contacts = contactDao.getAllContacts();
+
+        logGetAllContacts(logger, contacts);
+
+        return contacts;
     }
 
     public List<Contact> getByProperty(String property) {
-        return contactDao.getByProperty(property);
+        List<Contact> contactsWithTargetProperty = contactDao.getByProperty(property);
+
+        logGetContactByProperty(logger, property, contactsWithTargetProperty);
+
+        return contactsWithTargetProperty;
     }
 
     public ContactValidationResult create(Contact contact) {
@@ -34,6 +48,9 @@ public class ContactService {
 
         if (contactValidationResult.isValid()) {
             contactDao.create(contact);
+
+            logCreateContact(logger, contact);
+
             contactValidationResult.setMessage("Contact was successfully created");
         }
 
@@ -44,7 +61,12 @@ public class ContactService {
         ContactValidationResult contactValidationResult = contactValidator.validateUpdateContact(contact);
 
         if (contactValidationResult.isValid()) {
+            String oldContactAsString = contactDao.getById(contact.getId()).toString();
+
             contactDao.update(contact);
+
+            logUpdateContact(logger, oldContactAsString, contact);
+
             contactValidationResult.setMessage("Contact was successfully updated");
         }
 
@@ -52,6 +74,10 @@ public class ContactService {
     }
 
     public Contact deleteById(Long id) {
-        return contactDao.deleteById(id);
+        Contact contact = contactDao.deleteById(id);
+
+        logDeleteContactById(logger, contact);
+
+        return contact;
     }
 }
