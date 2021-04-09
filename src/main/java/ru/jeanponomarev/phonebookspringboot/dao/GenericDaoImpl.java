@@ -57,15 +57,15 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
 
     @Transactional
     @Override
-    public void remove(T object) {
+    public void delete(T object) {
         entityManager.remove(object);
     }
 
     @Transactional
     @Override
-    public T removeById(PK id) {
+    public T deleteById(PK id) {
         T targetEntity = getById(id);
-        remove(targetEntity);
+        delete(targetEntity);
 
         return targetEntity;
     }

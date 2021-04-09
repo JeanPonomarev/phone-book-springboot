@@ -30,7 +30,7 @@ public class ContactService {
     }
 
     public ContactValidationResult create(Contact contact) {
-        ContactValidationResult contactValidationResult = contactValidator.validateContact(contact);
+        ContactValidationResult contactValidationResult = contactValidator.validateCreateContact(contact);
 
         if (contactValidationResult.isValid()) {
             contactDao.create(contact);
@@ -40,11 +40,18 @@ public class ContactService {
         return contactValidationResult;
     }
 
-    public void update(Contact contact) {
-        contactDao.update(contact);
+    public ContactValidationResult update(Contact contact) {
+        ContactValidationResult contactValidationResult = contactValidator.validateUpdateContact(contact);
+
+        if (contactValidationResult.isValid()) {
+            contactDao.update(contact);
+            contactValidationResult.setMessage("Contact was successfully updated");
+        }
+
+        return contactValidationResult;
     }
 
-    public Contact removeById(Long id) {
-        return contactDao.removeById(id);
+    public Contact deleteById(Long id) {
+        return contactDao.deleteById(id);
     }
 }

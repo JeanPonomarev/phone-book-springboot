@@ -17,8 +17,24 @@ public class ContactValidator {
         this.contactDao = contactDao;
     }
 
-    public ContactValidationResult validateContact(Contact contact) {
+    public ContactValidationResult validateCreateContact(Contact contact) {
+        ContactValidationResult contactValidationResult = validateContactFields(contact);
 
+        if (isContactWithTargetPhoneNumberExistent(contact.getPhoneNumber())) {
+            contactValidationResult.setValid(false);
+            contactValidationResult.setMessage("Contact with this phone number already exist");
+
+            return contactValidationResult;
+        }
+
+        return contactValidationResult;
+    }
+
+    public ContactValidationResult validateUpdateContact(Contact contact) {
+        return validateContactFields(contact);
+    }
+
+    private ContactValidationResult validateContactFields(Contact contact) {
         ContactValidationResult contactValidationResult = new ContactValidationResult();
 
         if (contact.getFirstName() == null) {
@@ -59,13 +75,6 @@ public class ContactValidator {
         if (contact.getPhoneNumber().isEmpty()) {
             contactValidationResult.setValid(false);
             contactValidationResult.setMessage("Phone number shouldn't be an empty string");
-
-            return contactValidationResult;
-        }
-
-        if (isContactWithTargetPhoneNumberExistent(contact.getPhoneNumber())) {
-            contactValidationResult.setValid(false);
-            contactValidationResult.setMessage("Contact with this phone number already exist");
 
             return contactValidationResult;
         }

@@ -17,11 +17,11 @@ public interface GenericDao<T, PK extends Serializable> {
     void update(T object);
 
     @Transactional
-    void remove(T object);
+    void delete(T object);
 
     @Transactional
     T getById(PK id);
 
     @Transactional
-    T removeById(PK id);
+    T deleteById(PK id);
 }
