@@ -17,7 +17,7 @@ import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static ru.jeanponomarev.phonebookspringboot.logger.LoggerUtils.logBasicUriInfo;
+import static ru.jeanponomarev.phonebookspringboot.utils.LoggerUtils.logBasicUriInfo;
 
 @Controller
 @RequestMapping("/api")

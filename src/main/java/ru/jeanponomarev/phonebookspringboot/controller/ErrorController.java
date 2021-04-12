@@ -14,7 +14,7 @@ public class ErrorController {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ErrorInfo processException(Exception exception) {
-        logger.info("Error occurred: ", exception);
+        logger.error("Error occurred: ", exception);
         return new ErrorInfo(exception.getMessage());
     }
 }

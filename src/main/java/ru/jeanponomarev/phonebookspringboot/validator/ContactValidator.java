@@ -1,13 +1,13 @@
 package ru.jeanponomarev.phonebookspringboot.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.jeanponomarev.phonebookspringboot.dao.ContactDao;
 import ru.jeanponomarev.phonebookspringboot.entity.Contact;
 
 import java.util.List;
 
-@Service
+@Component
 public class ContactValidator {
 
     private final ContactDao contactDao;

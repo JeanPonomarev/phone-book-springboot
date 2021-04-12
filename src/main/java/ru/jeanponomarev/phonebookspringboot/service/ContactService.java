@@ -12,7 +12,7 @@ import ru.jeanponomarev.phonebookspringboot.validator.ContactValidator;
 
 import java.util.List;
 
-import static ru.jeanponomarev.phonebookspringboot.logger.LoggerUtils.*;
+import static ru.jeanponomarev.phonebookspringboot.utils.LoggerUtils.*;
 
 @Service
 public class ContactService {

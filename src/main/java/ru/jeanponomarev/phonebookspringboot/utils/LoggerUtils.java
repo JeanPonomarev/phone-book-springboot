@@ -1,4 +1,4 @@
-package ru.jeanponomarev.phonebookspringboot.logger;
+package ru.jeanponomarev.phonebookspringboot.utils;
 
 import org.slf4j.Logger;
 import ru.jeanponomarev.phonebookspringboot.entity.Contact;
