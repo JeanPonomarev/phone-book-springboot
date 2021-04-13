@@ -73,11 +73,23 @@ public class ContactService {
         return contactValidationResult;
     }
 
-    public Contact deleteById(Long id) {
-        Contact contact = contactDao.deleteById(id);
+    public ContactValidationResult deleteById(Long id) {
+        Contact removedContact = contactDao.deleteById(id);
 
-        logDeleteContactById(logger, contact);
+        logDeleteContactById(logger, removedContact);
 
-        return contact;
+        ContactValidationResult contactValidationResult = new ContactValidationResult();
+
+        if (removedContact == null) {
+            contactValidationResult.setValid(false);
+            contactValidationResult.setMessage(String.format("Contact with id = %d doesn't exist", id));
+
+            return contactValidationResult;
+        }
+
+        contactValidationResult.setValid(true);
+        contactValidationResult.setMessage("Contact was successfully deleted");
+
+        return contactValidationResult;
     }
 }

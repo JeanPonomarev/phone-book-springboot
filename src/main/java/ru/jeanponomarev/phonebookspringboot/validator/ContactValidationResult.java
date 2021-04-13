@@ -12,6 +12,11 @@ public class ContactValidationResult {
 
     }
 
+    public ContactValidationResult(boolean isValid, String message) {
+        this.isValid = isValid;
+        this.message = message;
+    }
+
     @JsonIgnore
     public boolean isValid() {
         return isValid;

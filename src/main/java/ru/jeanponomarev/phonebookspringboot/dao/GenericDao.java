@@ -20,6 +20,9 @@ public interface GenericDao<T, PK extends Serializable> {
     void delete(T object);
 
     @Transactional
+    void deleteAll();
+
+    @Transactional
     T getById(PK id);
 
     @Transactional

@@ -94,19 +94,11 @@ public class ContactsController {
     public ResponseEntity<ContactValidationResult> deleteContact(@RequestParam Long id, HttpServletRequest request) {
         logBasicUriInfo(logger, request);
 
-        Contact removedContact = contactService.deleteById(id);
+        ContactValidationResult contactValidationResult = contactService.deleteById(id);
 
-        ContactValidationResult contactValidationResult = new ContactValidationResult();
-
-        if (removedContact == null) {
-            contactValidationResult.setValid(false);
-            contactValidationResult.setMessage("Target contact doesn't exist");
-
+        if (!contactValidationResult.isValid()) {
             return new ResponseEntity<>(contactValidationResult, HttpStatus.NO_CONTENT);
         }
-
-        contactValidationResult.setValid(true);
-        contactValidationResult.setMessage("Target contact was successfully deleted");
 
         return new ResponseEntity<>(contactValidationResult, HttpStatus.OK);
     }

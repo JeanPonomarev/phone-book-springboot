@@ -20,9 +20,11 @@ public class ContactValidator {
     public ContactValidationResult validateCreateContact(Contact contact) {
         ContactValidationResult contactValidationResult = validateContactFields(contact);
 
-        if (isContactWithTargetPhoneNumberExistent(contact.getPhoneNumber())) {
+        String phoneNumber = contact.getPhoneNumber();
+
+        if (isContactWithTargetPhoneNumberExistent(phoneNumber)) {
             contactValidationResult.setValid(false);
-            contactValidationResult.setMessage("Contact with this phone number already exist");
+            contactValidationResult.setMessage(String.format("Contact with phone number \"%s\" already exist", phoneNumber));
 
             return contactValidationResult;
         }

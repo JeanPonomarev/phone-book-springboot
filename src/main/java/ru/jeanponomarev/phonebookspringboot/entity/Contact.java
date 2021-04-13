@@ -31,6 +31,13 @@ public class Contact {
         this.phoneNumber = phoneNumber;
     }
 
+    public Contact(Long id, String firstName, String lastName, String phoneNumber) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Long getId() {
         return id;
     }

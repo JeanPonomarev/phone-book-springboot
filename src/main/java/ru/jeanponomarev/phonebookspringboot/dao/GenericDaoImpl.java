@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.io.Serializable;
@@ -59,6 +60,16 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
     @Override
     public void delete(T object) {
         entityManager.remove(object);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(clazz);
+        criteriaDelete.from(clazz);
+
+        entityManager.createQuery(criteriaDelete).executeUpdate();
     }
 
     @Transactional
