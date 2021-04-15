@@ -1,13 +1,6 @@
 <template>
-
-    <div>
+    <div >
         <Toast/>
-
-        <Toolbar class="p-mb-3">
-            <template #left>
-                <h2 class="p-m-0">Phone Book</h2>
-            </template>
-        </Toolbar>
 
         <DataTable ref="dt" :value="contacts" :selection.sync="selectedContacts" dataKey="id"
                    :paginator="true" :rows="10" :filters="filters"
@@ -18,8 +11,9 @@
                 <div class="table-header p-d-flex p-jc-between">
                     <div>
                         <Button label="New" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
-                        <Button label="Delete" icon="pi pi-trash" class="p-button-danger" @click="confirmDeleteSelected"
+                        <Button label="Delete" icon="pi pi-trash" class="p-button-danger p-mr-2" @click="confirmDeleteSelected"
                                 :disabled="!selectedContacts || !selectedContacts.length"/>
+                        <Button label="Refresh" icon="pi pi-refresh" class="p-badge-info" @click="getAllContacts"></Button>
                     </div>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search"/>
@@ -44,7 +38,6 @@
         </DataTable>
 
         <Dialog :visible.sync="contactDialog" :style="{width: '450px'}" header="Contact Details" :modal="true" class="p-fluid">
-
             <div class="p-field">
                 <label for="firstName">First Name</label>
                 <InputText id="firstName" v-model.trim="contact.firstName" required="true" autofocus :class="{'p-invalid': submitted && !contact.firstName}" />
@@ -78,6 +71,11 @@
                 <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem" />
                 <span v-if="contact">Are you sure you want to delete this contact?</span>
             </div>
+
+            <Panel class="p-error" header="Error from server" v-if="errorFromServer" >
+                <div class="p-error">{{ errorFromServer }}</div>
+            </Panel>
+
             <template #footer>
                 <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteContact" />
                 <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteContactDialog = false"/>
@@ -95,12 +93,11 @@
             </Panel>
 
             <template #footer>
-                <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteContactsDialog = false"/>
                 <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteSelectedContacts" />
+                <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteContactsDialog = false"/>
             </template>
         </Dialog>
     </div>
-
 </template>
 
 <script>
@@ -217,6 +214,7 @@
             },
 
             editContact(contact) {
+                this.errorFromServer = null;
                 this.contact = {...contact};
                 this.contactDialog = true;
                 this.actionType = "update";
@@ -252,11 +250,32 @@
             },
 
             confirmDeleteSelected() {
-                this.deleteContactDialog = true;
+                this.deleteContactsDialog = true;
             },
 
             deleteSelectedContacts() {
+                const ids = this.selectedContacts.map(selectedContact => selectedContact.id);
 
+                this.contactService.deleteContactList(ids)
+                    .then(response => {
+                        this.deleteContactsDialog = false;
+                        this.selectedContacts = null;
+
+                        const successServerMessage = response.data.message;
+
+                        this.$toast.add({severity:'success', summary: 'Successful', detail: successServerMessage, life: 3000});
+
+                        this.getAllContacts();
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            this.errorFromServer = error.response.data.message;
+                        } else if (error.request) {
+                            this.errorFromServer = 'Server is not responding';
+                        } else {
+                            console.log('Error', error.message);
+                        }
+                    });
             }
 
         }

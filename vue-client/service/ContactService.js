@@ -20,4 +20,7 @@ export default class ContactService {
         return axios.delete(this.url + "/deleteContact?id=" + id);
     }
 
+    deleteContactList(ids) {
+        return axios.post(this.url + "/deleteContactList", ids);
+    }
 }

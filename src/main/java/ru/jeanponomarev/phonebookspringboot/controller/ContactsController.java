@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import static ru.jeanponomarev.phonebookspringboot.utils.LoggerUtils.logBasicUriInfo;
 
+@CrossOrigin
 @Controller
 @RequestMapping("/api")
 public class ContactsController {
@@ -105,10 +106,11 @@ public class ContactsController {
         return new ResponseEntity<>(contactValidationResult, HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteContactList")
+    @PostMapping("/deleteContactList")
     @ResponseBody
     public ResponseEntity<ContactValidationResult> deleteContactList(@RequestBody int[] idsAsInts, HttpServletRequest request) {
         logBasicUriInfo(logger, request);
+        logger.debug("Ids of removing contacts: " + Arrays.toString(idsAsInts));
 
         List<Long> idsAsLongs = Arrays.stream(idsAsInts).asLongStream().boxed().collect(Collectors.toList());
 
