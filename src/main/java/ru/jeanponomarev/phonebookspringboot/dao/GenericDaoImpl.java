@@ -83,4 +83,16 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
 
         return targetEntity;
     }
+
+    @Override
+    public int deleteContactList(List<PK> ids) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(clazz);
+
+        Root<T> root = criteriaDelete.from(clazz);
+
+        criteriaDelete.where(root.get("id").in(ids));
+
+        return entityManager.createQuery(criteriaDelete).executeUpdate();
+    }
 }

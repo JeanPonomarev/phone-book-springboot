@@ -10,6 +10,7 @@ import ru.jeanponomarev.phonebookspringboot.entity.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -137,6 +138,26 @@ class ContactDaoImplTest {
 
         assertThat(contactListAfterDelete).doesNotContain(expectedDeletedContact);
         assertThat(contactListAfterDelete.size()).isEqualTo(initialContactList.size() - 1);
+    }
+
+    @Test
+    void shouldDeleteContactList() {
+        List<Contact> initialContactList = getPopulatedContactList();
+        initialContactList.forEach(contact -> contactDao.create(contact));
+
+        List<Contact> contactListFromDatabase = contactDao.getAllContacts();
+        List<Contact> targetContactsToDelete = contactListFromDatabase.subList(1, 3);
+
+        List<Long> targetContactsIds = targetContactsToDelete.stream().map(Contact::getId).collect(Collectors.toList());
+
+        int deletedContactsAmount = contactDao.deleteContactList(targetContactsIds);
+        assertThat(deletedContactsAmount).isEqualTo(targetContactsIds.size());
+
+        List<Contact> expectedContactListFromDatabaseAfterDelete = new ArrayList<>(contactListFromDatabase);
+        expectedContactListFromDatabaseAfterDelete.removeAll(targetContactsToDelete);
+
+        List<Contact> actualContactListAfterDelete = contactDao.getAllContacts();
+        assertThat(actualContactListAfterDelete).containsExactly(expectedContactListFromDatabaseAfterDelete.toArray(new Contact[0]));
     }
 
     private List<Contact> getPopulatedContactList() {

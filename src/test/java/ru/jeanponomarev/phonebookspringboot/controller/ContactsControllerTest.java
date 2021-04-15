@@ -2,6 +2,7 @@ package ru.jeanponomarev.phonebookspringboot.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import ru.jeanponomarev.phonebookspringboot.service.ContactService;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -278,6 +280,45 @@ class ContactsControllerTest {
 
         int statusCode = response.getStatus();
         assertThat(statusCode).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @Test
+    void shouldDeleteContactList() throws Exception {
+        String uri = "/api/deleteContactList";
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L, 5L);
+
+        String expectedResponseMessage = "All target contacts have been successfully deleted";
+        ContactValidationResult contactValidationResult = new ContactValidationResult(true, expectedResponseMessage);
+
+        Mockito.when(contactService.deleteContactList(ids)).thenReturn(contactValidationResult);
+
+        String idsJson = generateJsonArray(ids);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete(uri)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(idsJson)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+
+        String responseJson = response.getContentAsString();
+        String responseMessage = retrieveMessage(responseJson);
+        assertThat(responseMessage).isEqualTo(expectedResponseMessage);
+
+        int statusCode = response.getStatus();
+        assertThat(statusCode).isEqualTo(HttpStatus.OK.value());
+    }
+
+    private String generateJsonArray(List<Long> ids) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonNode = mapper.createObjectNode();
+
+        ArrayNode arrayNode = jsonNode.putArray("ids");
+        ids.forEach(arrayNode::add);
+
+        return arrayNode.toString();
     }
 
     private String retrieveMessage(String json) throws JsonProcessingException {

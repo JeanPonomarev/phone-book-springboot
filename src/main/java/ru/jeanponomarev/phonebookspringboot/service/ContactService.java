@@ -92,4 +92,23 @@ public class ContactService {
 
         return contactValidationResult;
     }
+
+    public ContactValidationResult deleteContactList(List<Long> ids) {
+        int expectedAmountOfDeletedContacts = ids.size();
+        int actualAmountOfDeletedContacts = contactDao.deleteContactList(ids);
+
+        logDeleteContactList(logger, actualAmountOfDeletedContacts, expectedAmountOfDeletedContacts);
+
+        ContactValidationResult contactValidationResult = new ContactValidationResult();
+        contactValidationResult.setValid(true);
+
+        if (actualAmountOfDeletedContacts != expectedAmountOfDeletedContacts) {
+            contactValidationResult.setMessage(String.format("%d contacts not presented in the database",
+                    expectedAmountOfDeletedContacts - actualAmountOfDeletedContacts));
+        } else {
+            contactValidationResult.setMessage("All target contacts have been successfully deleted");
+        }
+
+        return contactValidationResult;
+    }
 }

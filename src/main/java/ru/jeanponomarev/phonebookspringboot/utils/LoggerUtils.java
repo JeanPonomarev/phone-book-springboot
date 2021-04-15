@@ -45,4 +45,13 @@ public class LoggerUtils {
             logger.debug(String.format("Contact was deleted: %s", contact));
         }
     }
+
+    public static void logDeleteContactList(Logger logger, int actualAmountOfDeletedContacts, int expectedAmountOfDeletedContacts) {
+        if (actualAmountOfDeletedContacts != expectedAmountOfDeletedContacts) {
+            logger.debug(String.format("Amount of target contacts that not presented in the database: %d",
+                    expectedAmountOfDeletedContacts - actualAmountOfDeletedContacts));
+        }
+
+        logger.debug(String.format("%d contacts deleted", actualAmountOfDeletedContacts));
+    }
 }

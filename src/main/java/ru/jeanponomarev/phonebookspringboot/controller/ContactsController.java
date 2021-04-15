@@ -15,7 +15,9 @@ import ru.jeanponomarev.phonebookspringboot.service.ContactService;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.jeanponomarev.phonebookspringboot.utils.LoggerUtils.logBasicUriInfo;
 
@@ -61,7 +63,7 @@ public class ContactsController {
         logBasicUriInfo(logger, request);
 
         Contact contactEntity = contactDtoToContactEntityConverter.convert(contactDto);
-        
+
         contactEntity.setId(null);
 
         ContactValidationResult contactValidationResult = contactService.create(contactEntity);
@@ -99,6 +101,18 @@ public class ContactsController {
         if (!contactValidationResult.isValid()) {
             return new ResponseEntity<>(contactValidationResult, HttpStatus.NO_CONTENT);
         }
+
+        return new ResponseEntity<>(contactValidationResult, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteContactList")
+    @ResponseBody
+    public ResponseEntity<ContactValidationResult> deleteContactList(@RequestBody int[] idsAsInts, HttpServletRequest request) {
+        logBasicUriInfo(logger, request);
+
+        List<Long> idsAsLongs = Arrays.stream(idsAsInts).asLongStream().boxed().collect(Collectors.toList());
+
+        ContactValidationResult contactValidationResult = contactService.deleteContactList(idsAsLongs);
 
         return new ResponseEntity<>(contactValidationResult, HttpStatus.OK);
     }

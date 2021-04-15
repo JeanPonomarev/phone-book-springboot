@@ -27,4 +27,7 @@ public interface GenericDao<T, PK extends Serializable> {
 
     @Transactional
     T deleteById(PK id);
+
+    @Transactional
+    int deleteContactList(List<PK> ids);
 }

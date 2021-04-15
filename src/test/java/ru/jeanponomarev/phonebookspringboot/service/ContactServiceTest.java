@@ -12,6 +12,9 @@ import ru.jeanponomarev.phonebookspringboot.entity.Contact;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidationResult;
 import ru.jeanponomarev.phonebookspringboot.validator.ContactValidator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -150,5 +153,36 @@ class ContactServiceTest {
 
         Long capturedId = contactArgumentCaptor.getValue();
         assertThat(capturedId).isEqualTo(id);
+    }
+
+    @Test
+    void shouldDeleteContactList() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L, 5L);
+
+        Mockito.when(contactDao.deleteContactList(ids)).thenReturn(ids.size());
+
+        ContactValidationResult contactValidationResult = contactService.deleteContactList(ids);
+
+        String expectedValidationMessage = "All target contacts have been successfully deleted";
+
+        assertThat(contactValidationResult.isValid()).isEqualTo(true);
+        assertThat(contactValidationResult.getMessage()).isEqualTo(expectedValidationMessage);
+    }
+
+    @Test
+    void shouldHandleContactListDeleteWithNonExistentContacts() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L, 4L, 5L);
+
+        int nonexistentContactsAmount = 2;
+        int existentContactsAmount = ids.size() - nonexistentContactsAmount;
+
+        Mockito.when(contactDao.deleteContactList(ids)).thenReturn(existentContactsAmount);
+
+        ContactValidationResult contactValidationResult = contactService.deleteContactList(ids);
+
+        String expectedValidationMessage = String.format("%d contacts not presented in the database", nonexistentContactsAmount);
+
+        assertThat(contactValidationResult.isValid()).isEqualTo(true);
+        assertThat(contactValidationResult.getMessage()).isEqualTo(expectedValidationMessage);
     }
 }
