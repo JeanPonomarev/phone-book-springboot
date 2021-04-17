@@ -279,7 +279,7 @@ class ContactsControllerTest {
         assertThat(responseMessage).isEqualTo(expectedResponseMessage);
 
         int statusCode = response.getStatus();
-        assertThat(statusCode).isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertThat(statusCode).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test

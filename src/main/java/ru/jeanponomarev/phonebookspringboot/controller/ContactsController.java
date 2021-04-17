@@ -100,7 +100,7 @@ public class ContactsController {
         ContactValidationResult contactValidationResult = contactService.deleteById(id);
 
         if (!contactValidationResult.isValid()) {
-            return new ResponseEntity<>(contactValidationResult, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(contactValidationResult, HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(contactValidationResult, HttpStatus.OK);
