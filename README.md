@@ -7,7 +7,15 @@ Frontend: Vue.js
 
 Database: MySQL Amazon RDS
 
-# How to run application
+# Requirements
+
+1. Java Runtime Environment
+
+2. Node.js and NPM
+
+3. Vue-cli ("npm install -g @vue/cli")
+
+# How to run the application
 
 1. Clone repository
 
